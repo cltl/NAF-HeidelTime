@@ -38,7 +38,7 @@ Preparation:
 2. The file config.props should be present in the directory from which the wrapper is called
 3. If the KafNafParser is not installed, you can adapt the following line in HeidelTime_NafKaf.py:
 
-#sys.path.append('')
+\#sys.path.append('')
 
 a) add the path to the KafNafParser between the quotes
 b) uncomment the code line (by removing the #)
