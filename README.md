@@ -47,6 +47,6 @@ You can now run the module as follows
 
 cat inputfile.naf | python PATH-TO-HEIDELTIME/HeidelTime_NafKaf.py PATH-TO-HEIDELTIME/heideltime-standalone/ tmp/ > outputfile.naf
 
-where tmp/ can be the path to any scratch directory where you can temporarily write and read files.
+where tmp/ is the path to any scratch directory where you can temporarily write and read files.
 
 
