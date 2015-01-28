@@ -1,6 +1,5 @@
 #!/usr/bin/env python
-#from KafNafParserAntske.time_data import CtimeExpressions
-#from KafNafParserAntske.time_data import Ctime
+
 from subprocess import call
 import sys
 import shutil
@@ -9,7 +8,7 @@ import time
 import re
 from lxml import etree
 
-sys.path.append('/Users/antske/PipelineBN/modulesForPaul/KafNafParserAntske/')
+#sys.path.append('')
 from KafNafParserMod import *
 #mapping language marking from naf to options in HeidelTime (NewsReader languages only)
 #FIXME: for now English only, Dutch is default
@@ -298,11 +297,13 @@ def process_text_with_heideltime(inputfile, heideldir, tmpdir, outdir = ''):
     
     begintime = time.strftime('%Y-%m-%dT%H:%M:%S%Z')
     obj = KafNafParser(inputfile)
-    
-    
-    
+    dct = obj.header.get_dct()
+    docNormDate = dct.split('T')[0]
+    dateParts = docNormDate.split('-')
+    myDate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0]
     
     raw_text = obj.get_raw()
+    #also retrieve document creation time from NAF
     
     if not raw_text:
         
@@ -326,8 +327,8 @@ def process_text_with_heideltime(inputfile, heideldir, tmpdir, outdir = ''):
     else:
         lang = 'DUTCH'
     
-
-    create_heideltime_output(tmpdir, raw_text, heideldir, lang)
+    date_raw_text = myDate + '\n' + raw_text
+    create_heideltime_output(tmpdir, date_raw_text, heideldir, lang)
 
     logFile = tmpdir + '/log'
     update_kafornaffile(tmpdir + '/outputtext', obj, logFile, inputfile)
