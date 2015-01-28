@@ -237,7 +237,7 @@ def addTimexLayer(timeSpans, nafobject, term=False):
         nafobject.add_timex(nafTime)
 
 
-def update_kafornaffile(timextext, nafobject, logfile, inputfile):
+def update_kafornaffile(timextext, nafobject, logfile, inputfile, skipFirstDate):
     """
     It goes through a text marked up by heideltime, identifies spans of found times and
         adds them to timeExpressions.
@@ -248,8 +248,9 @@ def update_kafornaffile(timextext, nafobject, logfile, inputfile):
         raw_text = create_raw_text(timextext)
         my_times = my_timex.findall('TIMEX3')
         
-        #remove first timex which dct and not a token
-        my_times.pop(0)
+        if skipFirstDate:
+            #remove first timex which dct and not a token
+            my_times.pop(0)
     
         #add timex layer (should also be there if not terms are found)
     
@@ -301,9 +302,14 @@ def process_text_with_heideltime(inputfile, heideldir, tmpdir, outdir = ''):
     begintime = time.strftime('%Y-%m-%dT%H:%M:%S%Z')
     obj = KafNafParser(inputfile)
     dct = obj.header.get_dct()
-    docNormDate = dct.split('T')[0]
-    dateParts = docNormDate.split('-')
-    myDate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0]
+    skipFirstDate = False
+    if dct is not None:
+        docNormDate = dct.split('T')[0]
+        dateParts = docNormDate.split('-')
+        myDate = dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0] + '\n'
+        skipFirstDate = True
+    else:
+        myDate = ''
     
     raw_text = obj.get_raw()
     #also retrieve document creation time from NAF
@@ -330,11 +336,11 @@ def process_text_with_heideltime(inputfile, heideldir, tmpdir, outdir = ''):
     else:
         lang = 'DUTCH'
     
-    date_raw_text = myDate + '\n' + raw_text
+    date_raw_text = myDate + raw_text
     create_heideltime_output(tmpdir, date_raw_text, heideldir, lang)
 
     logFile = tmpdir + '/log'
-    update_kafornaffile(tmpdir + '/outputtext', obj, logFile, inputfile)
+    update_kafornaffile(tmpdir + '/outputtext', obj, logFile, inputfile, skipFirstDate)
 
     lp = Clp(name="heideltime",version="standalone-1.7",btimestamp=begintime)
     obj.add_linguistic_processor('timex3', lp)
