@@ -247,6 +247,9 @@ def update_kafornaffile(timextext, nafobject, logfile, inputfile):
         my_timex = etree.parse(timextext,etree.XMLParser(remove_blank_text=True))
         raw_text = create_raw_text(timextext)
         my_times = my_timex.findall('TIMEX3')
+        
+        #remove first timex which dct and not a token
+        my_times.pop(0)
     
         #add timex layer (should also be there if not terms are found)
     
